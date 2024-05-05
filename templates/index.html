@@ -1,4 +1,7 @@
 <!-- File ./templates/index.html  -->
+<!-- python app.py to start app  -->
+<!-- npm run buildcss to build css  -->
+<!-- git add . / git commit =m 'komentarz' / git push origin main  -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,7 +14,13 @@
 
 <body>
     <div class="bg-blue-600">
-        TEST KURWAAAAAAAAAAAAAAAAAA
+        Tu będzie top navbar
+    </div>
+
+    <div>
+        <a href="{{url_for ('generate')}}">
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">GENERUJ</button>
+        </a>
     </div>
 </body>
 
