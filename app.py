@@ -1,29 +1,29 @@
-from flask import Flask, render_template
-# from openai import OpenAI
+from flask import Flask, render_template, redirect, url_for, request, session
+from dotenv import load_dotenv
+import os
+from generation import Generator
+import json
+load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.getenv('FLASK_SESSION_KEY') # Set a secret key for session management
+generator = Generator()
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    names_list = session.pop('names_list', [])  # Retrieve names_list from session or default to empty list
+    return render_template("index.html", list=names_list)
 
-@app.route("/generate/")
-def make_turn():
-    return render_template("index.html")
+@app.route("/generate", methods=["POST"])
+def generate():
+    race = request.form.get('race')
+    gender = request.form.get('gender')
+    print(race,' ',gender)
+    names = generator.GenerateNames(race, gender)
+    names_parsed = json.loads(names)
+    names_list = names_parsed['names']
+    session['names_list'] = names_list  # Store names_list in session
+    return redirect(url_for('index'))
 
-
-
-
-app.run(debug=True)
-
-# client = OpenAI()
-
-# response = client.chat.completions.create(
-#   model="gpt-3.5-turbo-0125",
-#   response_format={ "type": "json_object" },
-#   messages=[
-#     {"role": "system", "content": "You are a helpful assistant designed to output JSON."},
-#     {"role": "user", "content": "Who won the world series in 2020?"}
-#   ]
-# )
-# print(response.choices[0].message.content)
+if __name__ == '__main__':
+    app.run(debug=True)
