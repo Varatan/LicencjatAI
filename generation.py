@@ -24,3 +24,5 @@ class Generator():
       ]
       )
       return response.choices[0].message.content
+    
+#dobre/złe imiona 

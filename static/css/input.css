@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    select {
+        @apply bg-gray-700 border border-gray-600 rounded-lg focus:ring-amber-500 focus:border-amber-500 p-1 text-lg;
+    }
+
+    label {
+        @apply text-white my-2 font-medium text-lg;
+    }
+}

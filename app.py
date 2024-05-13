@@ -12,7 +12,8 @@ generator = Generator()
 @app.route("/")
 def index():
     names_list = session.pop('names_list', [])  # Retrieve names_list from session or default to empty list
-    return render_template("index.html", list=names_list)
+    loading = False
+    return render_template("index.html", list=names_list, loading=loading)
 
 @app.route("/generate", methods=["POST"])
 def generate():

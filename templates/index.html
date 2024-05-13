@@ -2,50 +2,107 @@
 <!-- python app.py to start app  -->
 <!-- npm run buildcss to build css  -->
 <!-- git add . / git commit =m 'komentarz' / git push origin main  -->
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{{url_for('static',filename='css/output.css')}}" rel="stylesheet">
-    <title>NameGen</title>
-</head>
+
+{% block title %}NameGen{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
 
 <body>
-    <div class="bg-blue-600">
-        Tu będzie top navbar
-    </div>
-    <div>
-        <form action="/generate" method="post">
-            <label for="race">Select Race:</label>
-            <select id="race" name="race">
-                <option value="Dwarf">Dwarf</option>
-                <option value="Elf">Elf</option>
-                <option value="Human">Human</option>
-                <option value="Lizardfolk">Lizardfolk</option>
-            </select>
-            <label for="gender">Select Gender:</label>
-            <select id="gender" name="gender">
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-            </select>
-            <input class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" type="submit"
-                value="Generuj">
-        </form>
-    </div>
+    {% block nav %}
+    {{ super() }}
+    {% endblock %}
+    {% block content %}
+    <div class="max-w-lg mx-auto">
+        <div>
+            <form action="/generate" method="post" class="flex flex-col">
+                <label for="race">Select Race:</label>
+                <select id="race" name="race">
+                    <option value="Dwarf">Dwarf</option>
+                    <option value="Elf">Elf</option>
+                    <option value="Human">Human</option>
+                    <option value="divzardfolk">Lizardfolk</option>
+                </select>
+                <label for="gender">Select Gender:</label>
+                <select id="gender" name="gender">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+                <button
+                    class="bg-amber-500 hover:bg-amber-300 transition duration-500 text-white font-bold py-2 px-4 rounded-full drop-shadow-sm my-5 text-xl disabled:bg-slate-400"
+                    id="generateBtn" type="submit" onclick="setLoading()">
+                    <svg aria-hidden="true" role="status"
+                        class="inline w-4 h-4 me-3 text-indigo-700 fill-indigo-500 animate-spin" id="loadingSpinner"
+                        viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                            fill="#E5E7EB" />
+                        <path
+                            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                            fill="currentColor" />
+                    </svg>
+                    <span id="buttonText">Generate</span>
+                </button>
+            </form>
+        </div>
 
-    <div>
-        <ul>
+        <div class="grid grid-cols-2 h-40">
+            {%if list|length > 0 %}
             {% for i in range(10) %}
-            <li>
+            <div class="bg-indigo-600 border-violet-950 hover:bg-indigo-400 transition duration-300 border-2 rounded-lg pl-4 py-2 text-lg font-semibold m-1 text-center cursor-pointer"
+                onclick="copyToClipboard('{{ list[i] }}')">
                 {{list[i]}}
-            </li>
+            </div>
             {% endfor %}
-        </ul>
-
-
+            {%endif%}
+        </div>
     </div>
+    {% endblock %}
+
+    {% block footer %}
+    {{ super() }}
+    {% endblock %}
+    {%block scripts%}
+    <script>
+        let loadingState = {% if loading %}true{% else %} false{% endif %};
+        let generateBtn = document.getElementById('generateBtn');
+        let buttonText = document.getElementById('buttonText');
+        var loadingSpinner = document.getElementById('loadingSpinner');
+
+        function toggleSpinner() {
+            if (loadingState) {
+                generateBtn.disabled = true
+                buttonText.innerHTML = "Generating..."
+                loadingSpinner.style.display = 'inline';
+            } else {
+                generateBtn.disabled = false
+                loadingSpinner.style.display = 'none';
+            }
+        };
+
+        function setLoading() {
+            loadingState = true
+            toggleSpinner()
+            document.querySelector('form').submit();
+        }
+        window.onload = function () {
+            toggleSpinner();
+        };
+
+
+
+        function copyToClipboard(text) {
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        }
+    </script>
+    {% endblock %}
 </body>
 
 </html>
