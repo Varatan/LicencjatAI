@@ -21,6 +21,8 @@ currentYear = datetime.now().year
 def redirect_to_names():
     return redirect(url_for('names_index'))
 
+# todo schować kulture po redirecie na formularz, walidować zwracany z chata string, czy rzeczywiście dostaliśmy JSONa.
+
 @app.route("/names")
 def names_index():
     names_list = session.pop('names_list', [])  # Retrieve names_list from session or default to empty list
