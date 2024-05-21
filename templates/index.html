@@ -1,7 +1,7 @@
 <!-- File ./templates/index.html  -->
 <!-- python app.py to start app  -->
 <!-- npm run buildcss to build css  -->
-<!-- git add . / git commit =m 'komentarz' / git push origin main  -->
+<!-- git add . / git commit -m 'komentarz' / git push origin main  -->
 {% extends "layout.html" %}
 
 
@@ -14,24 +14,33 @@
     {% block nav %}
     {{ super() }}
     {% endblock %}
-    {% block content %}
+    {% block form %}
     <div class="max-w-lg mx-auto">
         <div>
             <form action="/generate" method="post" class="flex flex-col">
-                <label for="race">Select Race:</label>
-                <select id="race" name="race">
-                    <option value="Dwarf">Dwarf</option>
-                    <option value="Elf">Elf</option>
-                    <option value="Human">Human</option>
-                    <option value="divzardfolk">Lizardfolk</option>
+                {% for param in paramsNames %}
+                {% if param in params['optional'] %}
+                {% set required = '' %}
+                {% else %}
+                {% set required = 'required' %}
+                {% endif %}
+                {% if params[param] is iterable and param != 'optional'%}
+                <label for="{{ param }}" id="{{param}}Label">{%if param == 'last name' or param == 'nickname' %}Include
+                    {{ param
+                    }}?{%else%}Select {{ param }}:
+                    {%endif%}</label>
+                <select id="{{ param }}" name="{{ param }}" {{ required }}>
+                    {% if param in params['optional'] %}
+                    <option value="">-- Select {{ param }} --</option>
+                    {% endif %}
+                    {% for option in params[param] %}
+                    <option value="{{ option }}">{{ option }}</option>
+                    {% endfor %}
                 </select>
-                <label for="gender">Select Gender:</label>
-                <select id="gender" name="gender">
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select>
+                {% endif %}
+                {% endfor %}
                 <button
-                    class="bg-amber-500 hover:bg-amber-300 transition duration-500 text-white font-bold py-2 px-4 rounded-full drop-shadow-sm my-5 text-xl disabled:bg-slate-400"
+                    class="bg-amber-500 hover:bg-amber-300 transition duration-500 text-white font-bold py-2 px-4 rounded-full drop-shadow-sm my-5 mx-4 sm:mx-1 text-xl disabled:bg-slate-400"
                     id="generateBtn" type="submit" onclick="setLoading()">
                     <svg aria-hidden="true" role="status"
                         class="inline w-4 h-4 me-3 text-indigo-700 fill-indigo-500 animate-spin" id="loadingSpinner"
@@ -47,60 +56,77 @@
                 </button>
             </form>
         </div>
-
-        <div class="grid grid-cols-2 h-40">
-            {%if list|length > 0 %}
-            {% for i in range(10) %}
-            <div class="bg-indigo-600 border-violet-950 hover:bg-indigo-400 transition duration-300 border-2 rounded-lg pl-4 py-2 text-lg font-semibold m-1 text-center cursor-pointer"
-                onclick="copyToClipboard('{{ list[i] }}')">
-                {{list[i]}}
-            </div>
-            {% endfor %}
-            {%endif%}
-        </div>
     </div>
     {% endblock %}
+
+    {%block result%}
+    <div class="grid grid-cols-2 h-96 mb-10 max-w-lg mx-auto">
+        {%if list|length > 0 %}
+        {% for i in range(10) %}
+        <div class="bg-indigo-600 border-violet-950 hover:bg-indigo-400 transition duration-300 border-2 rounded-lg py-2 text-lg font-semibold m-1 text-center cursor-pointer"
+            onclick="copyToClipboard('{{ list[i] }}')">
+            {{list[i]}}
+        </div>
+        {% endfor %}
+        {%endif%}
+    </div>
+    {%endblock%}
 
     {% block footer %}
     {{ super() }}
     {% endblock %}
     {%block scripts%}
     <script>
-        let loadingState = {% if loading %}true{% else %} false{% endif %};
-        let generateBtn = document.getElementById('generateBtn');
-        let buttonText = document.getElementById('buttonText');
-        var loadingSpinner = document.getElementById('loadingSpinner');
+        let loadingState = {% if loading %}true{% else %} false{% endif %}
+        let generateBtn = document.getElementById('generateBtn')
+        let buttonText = document.getElementById('buttonText')
+        let loadingSpinner = document.getElementById('loadingSpinner')
+        let raceSelect = document.getElementById('race')
 
         function toggleSpinner() {
             if (loadingState) {
                 generateBtn.disabled = true
                 buttonText.innerHTML = "Generating..."
-                loadingSpinner.style.display = 'inline';
+                loadingSpinner.style.display = 'inline'
             } else {
                 generateBtn.disabled = false
-                loadingSpinner.style.display = 'none';
+                loadingSpinner.style.display = 'none'
             }
         };
 
         function setLoading() {
             loadingState = true
             toggleSpinner()
-            document.querySelector('form').submit();
+            document.querySelector('form').submit()
         }
         window.onload = function () {
-            toggleSpinner();
+            toggleSpinner()
         };
 
-
-
         function copyToClipboard(text) {
-            const el = document.createElement('textarea');
-            el.value = text;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
+            const el = document.createElement('textarea')
+            el.value = text
+            document.body.appendChild(el)
+            el.select()
+            document.execCommand('copy')
+            document.body.removeChild(el)
         }
+
+        function hideCulture() {
+            let culture = document.getElementById('culture')
+            let cultureLabel = document.getElementById('cultureLabel')
+            value = raceSelect.value
+            if (value == 'Human') {
+                culture.style.display = 'block'
+                cultureLabel.style.display = 'block'
+            } else {
+                culture.style.display = 'none'
+                cultureLabel.style.display = 'none'
+            }
+
+        }
+
+        raceSelect.addEventListener("change", hideCulture)
     </script>
     {% endblock %}
 </body>

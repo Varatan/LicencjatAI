@@ -4,10 +4,10 @@
 
 @layer base {
     select {
-        @apply bg-gray-700 border border-gray-600 rounded-lg focus:ring-amber-500 focus:border-amber-500 p-1 text-lg;
+        @apply bg-gray-700 border border-gray-600 rounded-lg p-1 text-lg mx-4 sm:mx-1;
     }
 
     label {
-        @apply text-white my-2 font-medium text-lg;
+        @apply text-white my-2 font-medium text-lg mx-4 sm:mx-1;
     }
 }

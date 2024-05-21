@@ -21,10 +21,12 @@
         <h1 class="text-amber-500 text-5xl font-bold mx-5">
             NameGen
         </h1>
+        <a href="{{url_for('names_index')}}">Names</a>
         {%endblock %}
     </div>
 
-    <div id="content" class="bg-indigo-900 text-white h-screen ">{% block content %}{% endblock %}</div>
+    <div id="content" class="bg-indigo-900 text-white block h-fit">{% block form %}{% endblock %}</div>
+    <div id="content" class="bg-indigo-900 text-white block h-4/5 pb-6">{% block result %}{% endblock %}</div>
 
     <div id="footer" class="bg-indigo-700 text-white">
         {% block footer %}
