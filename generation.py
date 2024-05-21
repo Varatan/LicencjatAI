@@ -15,7 +15,7 @@ class Generator():
       print("Last name:", lastName)
       print("Nickname:", nickName)
       if nickName == 'Yes':
-         nickName = f'Include a fitting {culture} {profession} nickname after the first name and before the last name (if included) in single quotation marks.'
+         nickName = f'Using a maximum of three words include a fitting {culture} {profession} nickname after the first name and before the last name (if included) in single quotation marks.'
       else:
          nickName = ''
       if lastName == 'Yes':
@@ -27,7 +27,7 @@ class Generator():
       if culture != '':
          culture = f'from a {culture} culture'
 
-      end_message = f'Generate 10 {gender} fantasy names for a {alignment} {race} {profession} {culture}. {tone} {lastName} {nickName}'
+      end_message = f'Generate exactly 10 {gender} fantasy names for a {alignment} {race} {profession} {culture}. {tone} {lastName} {nickName}'
       print(end_message)
 
       response = self.__client.chat.completions.create(

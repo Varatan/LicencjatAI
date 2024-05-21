@@ -4,7 +4,7 @@
 
 @layer base {
     select {
-        @apply bg-gray-700 border border-gray-600 rounded-lg p-1 text-lg mx-4 sm:mx-1;
+        @apply appearance-none;
     }
 
     label {
