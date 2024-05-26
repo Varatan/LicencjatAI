@@ -13,23 +13,32 @@ generator = Generator()
 
 paramsNames = list(params.keys())
 
-sites=['Character names', 'Place names', 'Stats', 'About']
+sites=['Names', 'Stats', 'Info']
 
 currentYear = datetime.now().year
 
 @app.route("/")
 def redirect_to_names():
-    return redirect(url_for('names_index'))
+    return redirect(url_for('names'))
 
 # todo schować kulture po redirecie na formularz, walidować zwracany z chata string, czy rzeczywiście dostaliśmy JSONa.
 
 @app.route("/names")
-def names_index():
+def names():
     names_list = session.pop('names_list', [])  # Retrieve names_list from session or default to empty list
     current = session.pop('current', [])
     loading = False
-    currentSite = "Character names"
+    currentSite = "Names"
     return render_template("names.html", list=names_list, loading=loading, params=params, paramsNames=paramsNames, current = current, sites=sites, currentSite = currentSite, currentYear=currentYear)
+
+@app.route("/info")
+def info():
+    currentSite="Info"
+    return render_template("info.html",sites=sites, currentSite = currentSite, currentYear=currentYear)
+
+@app.route("/stats") # temporary
+def stats():
+    return redirect(url_for('names'))
 
 @app.route("/generate", methods=["POST"])
 def generate():
@@ -54,12 +63,11 @@ def generate():
 }
 
     names = generator.GenerateNames(race, gender, alignment, profession, tone, culture, lastName, nickName)
-    names_parsed = json.loads(names)
-    names_list = names_parsed['names']
+    names_list = names['names']
     session['names_list'] = names_list  # Store names_list in session
     session['current'] = current
 
-    return redirect(url_for('names_index'))
+    return redirect(url_for('names'))
 
 if __name__ == '__main__':
     app.run(debug=True)
