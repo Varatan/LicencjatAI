@@ -3,29 +3,26 @@ from dotenv import load_dotenv
 from datetime import datetime
 from params import params
 import os
+import dbOps
 from generation import Generator
-import json
+
 load_dotenv()
 
 app = Flask(__name__)
+
 app.secret_key = os.getenv('FLASK_SESSION_KEY') # Set a secret key for session management
 generator = Generator()
-
 paramsNames = list(params.keys())
-
 sites=['Names', 'Stats', 'Info']
-
 currentYear = datetime.now().year
 
 @app.route("/")
 def redirect_to_names():
     return redirect(url_for('names'))
 
-# todo schować kulture po redirecie na formularz, walidować zwracany z chata string, czy rzeczywiście dostaliśmy JSONa.
-
 @app.route("/names")
 def names():
-    names_list = session.pop('names_list', [])  # Retrieve names_list from session or default to empty list
+    names_list = session.pop('names_list', []) 
     current = session.pop('current', [])
     loading = False
     currentSite = "Names"
@@ -61,11 +58,22 @@ def generate():
     'last name': lastName,
     'nickname': nickName
 }
+    
+    conn = dbOps.get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''INSERT INTO requests (race, gender, alignment, profession, tone, culture, last_name, nickname)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
+                   (race, gender, alignment, profession, tone, culture, lastName, nickName))
+    lastId = cursor.lastrowid
+    conn.commit()
+    conn.close()
 
-    names = generator.GenerateNames(race, gender, alignment, profession, tone, culture, lastName, nickName)
+    names = generator.GenerateNames(race, gender, alignment, profession, tone, culture, lastName, nickName,lastId)
     names_list = names['names']
     session['names_list'] = names_list  # Store names_list in session
     session['current'] = current
+
+
 
     return redirect(url_for('names'))
 

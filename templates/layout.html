@@ -10,6 +10,10 @@
         :root {
             color-scheme: dark;
         }
+
+        html {
+            scroll-behavior: smooth;
+        }
     </style>
     <title>{% block title %}{% endblock %}</title>
     {% endblock %}
@@ -23,7 +27,7 @@
         </h1>
         <div class="mt-5">
             {%for site in sites%}
-            <a class='inline-block group mx-4 text-amber-500 font-semibold text-lg transition-all duration-300 rounded-lg
+            <a class='inline-block group mx-1 sm:mx-4 text-amber-500 font-semibold text-lg transition-all duration-300 rounded-lg
             {% if site == currentSite %}
               text-indigo-200
             {% else %}

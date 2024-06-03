@@ -3,6 +3,7 @@ import os
 import json
 from openai._exceptions import OpenAIError
 from dotenv import load_dotenv
+import dbOps
 load_dotenv()
 
 
@@ -11,7 +12,7 @@ class Generator():
        self.__key = os.getenv('OPENAI_API_KEY')
        self.__client = OpenAI(api_key = self.__key)
 
-    def GenerateNames(self, race, gender, alignment, profession, tone, culture, lastName, nickName):
+    def GenerateNames(self, race, gender, alignment, profession, tone, culture, lastName, nickName,lastId):
       if nickName == 'Yes':
          nickName = f'Using a maximum of three words include a fitting {culture} {profession} nickname after the name in single quotation marks.'
       else:
@@ -47,6 +48,14 @@ class Generator():
             print(f'{i} result',result)
             if "names" in result and isinstance(result["names"], list):
                print(result)
+
+               conn = dbOps.get_db_connection()
+               cursor = conn.cursor()
+               for name in result['names']:
+                  cursor.execute('INSERT INTO responses (name,requestId) VALUES (?,?)', (name,lastId))
+               conn.commit()
+               conn.close()
+
                return result
             else:
                print("Invalid format received:", content)

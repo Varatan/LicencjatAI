@@ -9,25 +9,32 @@
     {{ super() }}
     {% endblock %}
     {% block content1 %}
-    <div class="max-w-lg mx-auto mb-24 h-screen mt-4">
-        <h2 class="text-lg font-semibold">Why create this site?</h2>
-        <p class="mb-2">This website was created to provide players and game masters with a highly customizable solution
-            for
-            name generation with a modern and mobile-friendly user interface.</p>
-        <h2 class="text-lg font-semibold mt-4">Why use AI?</h2>
-        <p class="mb-2">Large language models like ChatGPT are the easiest way for me to create a service that allows
-            for the generation of names using various parameters. These parameters mean that a fitting name is
-            usually returned in the first set, unlike simple generation based solely upon a single category and
-            random pemutations of parts.</p>
-        <p class="mb-2">Furthermore, an AI-based approach makes it very easy to broaden the selection of parameters if
-            needed.</p>
-        <h2 class="text-lg font-semibold mt-4">Note</h2>
-        <p class="mb-2">The author of this website is Piotr Dąbrowski.</p>
-        <p class="">This website is an integral part of a bachelor's thesis (course: electronic
-            information processing), prepared under the direction of Dr. Krzysztof Pomorski at the Faculty of Management
-            and
-            Social Communication of the Jagiellonian University.</p>
+    <div class="mx-4">
+        <div class="max-w-lg mx-auto mb-24 h-screen mt-4">
+            <h2 class="text-lg font-semibold">Why create this site?</h2>
+            <p class="mb-2">This website was created to provide players and game masters with a highly customizable
+                solution
+                for
+                name generation with a modern and mobile-friendly user interface.</p>
+            <h2 class="text-lg font-semibold mt-4">Why use AI?</h2>
+            <p class="mb-2">Large language models like ChatGPT are the easiest way for me to create a service that
+                allows
+                for the generation of names using various parameters. These parameters mean that a fitting name is
+                usually returned in the first set, unlike simple generation based solely upon a single category and
+                random pemutations of parts.</p>
+            <p class="mb-2">Furthermore, an AI-based approach makes it very easy to broaden the selection of parameters
+                if
+                needed.</p>
+            <h2 class="text-lg font-semibold mt-4">Note</h2>
+            <p class="mb-2">The author of this website is Piotr Dąbrowski.</p>
+            <p class="">This website is an integral part of a bachelor's thesis (course: electronic
+                information processing), prepared under the direction of Dr. Krzysztof Pomorski at the Faculty of
+                Management
+                and
+                Social Communication of the Jagiellonian University.</p>
+        </div>
     </div>
+
 
     {% endblock %}
 
@@ -39,6 +46,7 @@
     {{ super() }}
     {% endblock %}
     {%block scripts%}
+    {{ super() }}
     {% endblock %}
 </body>
 
