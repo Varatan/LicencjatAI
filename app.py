@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request, session
+from flask import Flask, render_template, redirect, url_for, request, session,jsonify
 from dotenv import load_dotenv
 from datetime import datetime
 from params import params
@@ -22,6 +22,7 @@ def redirect_to_names():
 
 @app.route("/names")
 def names():
+    paramsNames = list(params.keys())
     names_list = session.pop('names_list', []) 
     current = session.pop('current', [])
     loading = False
@@ -33,9 +34,35 @@ def info():
     currentSite="Info"
     return render_template("info.html",sites=sites, currentSite = currentSite, currentYear=currentYear)
 
-@app.route("/stats") # temporary
+@app.route("/stats")
 def stats():
-    return redirect(url_for('names'))
+    currentSite="Stats"
+    for i in range(len(paramsNames)):
+        paramsNames[i] = paramsNames[i].capitalize()
+    return render_template("stats.html",sites=sites, currentSite = currentSite, currentYear=currentYear, paramsNames=paramsNames)
+
+@app.route('/data')
+def data():
+    value = request.args.get('param').lower().replace(" ", "_")
+    print(value)
+    conn = dbOps.get_db_connection()
+    cursor = conn.cursor()
+    requests = cursor.execute(''f'SELECT {value}, count({value}) as count FROM requests group by {value}''').fetchall()
+    conn.close()
+    requests_data = [dict(row) for row in requests]
+
+    for item in requests_data:
+        if item[f'{value}'] == '':
+            item[f'{value}'] = 'Empty'
+
+    print("requests_data:", requests_data)
+    valueHeader = value.capitalize()
+    chart_data = [[valueHeader,'Count']]
+    for row in requests_data:
+        chart_data.append([row[f'{value}'], row['count']])
+
+    return jsonify(chart_data)
+
 
 @app.route("/generate", methods=["POST"])
 def generate():

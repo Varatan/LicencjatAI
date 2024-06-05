@@ -10,7 +10,7 @@ conn.execute('''CREATE TABLE IF NOT EXISTS requests (
                         profession TEXT,
                         tone TEXT,
                         culture TEXT,
-                        last_name TEXT,
+                        last name TEXT,
                         nickname TEXT,
                         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
                     )''')

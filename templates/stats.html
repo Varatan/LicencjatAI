@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+{% block title %}Stats{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+<body>
+    {% block nav %}
+    {{ super() }}
+    {% endblock %}
+    {% block content1 %}
+    <div class="mx-4">
+        <div class="max-w-lg mx-auto mb-24 h-screen mt-4">
+            <label for="param" id="paramLabel" class="block">Select parameter</label>
+            <div class="bg-gray-700 border border-gray-600 rounded-lg text-lg mx-4 mb-4 sm:mx-1 inline-block relative cursor-pointer w-full"
+                id="{{param}}Div">
+                <select
+                    class="w-full bg-inherit pr-8 p-1 bg-gray-700 cursor-pointer rounded-lg hover:bg-gray-500 transition duration-300 focus:outline-none focus:ring focus:ring-indigo-300 z-0"
+                    id="paramSelect" name="paramSelect">
+                    {% for param in paramsNames %}
+                    {%if param !='Optional'%}
+                    <option value="{{ param }}">{{ param }}</option>
+                    {%endif%}
+                    {% endfor %}
+                </select>
+                <svg class="inline w-5 h-5 fill-white absolute right-3 top-2" style="pointer-events:none"
+                    id="selectArrow" viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve">
+                    <path id="XMLID_225_"
+                        d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393
+                                                	c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393
+                                                	s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z" />
+                </svg>
+            </div>
+            <div id="pie_chart" class="w-full"></div>
+        </div>
+    </div>
+
+
+    {% endblock %}
+
+    {%block content2%}
+
+    {%endblock%}
+
+    {% block footer %}
+    {{ super() }}
+    {% endblock %}
+    {%block scripts%}
+    {{ super() }}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['corechart'] })
+
+        let paramSelect = document.getElementById('paramSelect')
+        paramSelect.addEventListener("change", drawChart)
+
+        function drawChart() {
+            let value = paramSelect.value
+            fetch(`/data?param=${value}`)
+                .then(response => response.json())
+                .then(chartData => {
+                    const data = google.visualization.arrayToDataTable(chartData)
+
+                    const options = {
+                        title: `${value} selection`,
+                        backgroundColor: '#312E81',
+                        legend: { position: 'bottom', textStyle: { color: 'white' } },
+                        titleTextStyle: { color: 'white' },
+                        width: 600,
+                        height: 400
+                    };
+
+                    const chart = new google.visualization.PieChart(document.getElementById('pie_chart'))
+
+                    chart.draw(data, options)
+                })
+                .catch(error => console.error('Error fetching data:', error))
+        }
+        window.onload = function () {
+            drawChart()
+        };
+    </script>
+    {% endblock %}
+</body>
+
+</html>
