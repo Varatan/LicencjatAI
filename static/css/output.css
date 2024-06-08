@@ -593,10 +593,6 @@ label {
   top: 0.5rem;
 }
 
-.z-0 {
-  z-index: 0;
-}
-
 .m-1 {
   margin: 0.25rem;
 }
@@ -604,6 +600,11 @@ label {
 .mx-1 {
   margin-left: 0.25rem;
   margin-right: 0.25rem;
+}
+
+.mx-2 {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 .mx-4 {
@@ -634,6 +635,10 @@ label {
   margin-bottom: 6rem;
 }
 
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
 .mb-80 {
   margin-bottom: 20rem;
 }
@@ -654,10 +659,6 @@ label {
   margin-top: 1.25rem;
 }
 
-.mb-4 {
-  margin-bottom: 1rem;
-}
-
 .block {
   display: block;
 }
@@ -672,10 +673,6 @@ label {
 
 .flex {
   display: flex;
-}
-
-.table {
-  display: table;
 }
 
 .grid {
@@ -717,6 +714,14 @@ label {
 
 .h-screen {
   height: 100vh;
+}
+
+.min-h-72 {
+  min-height: 18rem;
+}
+
+.min-h-80 {
+  min-height: 20rem;
 }
 
 .w-4 {
@@ -769,6 +774,10 @@ label {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.flex-row {
+  flex-direction: row;
+}
+
 .flex-col {
   flex-direction: column;
 }
@@ -779,6 +788,10 @@ label {
 
 .justify-center {
   justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
 }
 
 .rounded-full {

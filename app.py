@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, request, session,jsonify
 from dotenv import load_dotenv
 from datetime import datetime
+from collections import Counter
 from params import params
 import os
 import dbOps
@@ -39,12 +40,22 @@ def stats():
     currentSite="Stats"
     for i in range(len(paramsNames)):
         paramsNames[i] = paramsNames[i].capitalize()
-    return render_template("stats.html",sites=sites, currentSite = currentSite, currentYear=currentYear, paramsNames=paramsNames)
 
-@app.route('/data')
-def data():
+    conn = dbOps.get_db_connection()
+    cursor = conn.cursor()
+    queries = cursor.execute(''f'SELECT id from requests order by id desc limit 1''').fetchone()
+    names = cursor.execute(''f'SELECT id from responses order by id desc limit 1''').fetchone()
+    conn.close()
+    queries = queries[0]
+    names = names[0]
+
+    #print("Names: ", names," Queries: ", queries)
+    return render_template("stats.html",sites=sites, currentSite = currentSite, currentYear=currentYear, paramsNames=paramsNames, names=names, queries=queries)
+
+@app.route('/params')
+def parameters():
     value = request.args.get('param').lower().replace(" ", "_")
-    print(value)
+    #print(value)
     conn = dbOps.get_db_connection()
     cursor = conn.cursor()
     requests = cursor.execute(''f'SELECT {value}, count({value}) as count FROM requests group by {value}''').fetchall()
@@ -55,7 +66,7 @@ def data():
         if item[f'{value}'] == '':
             item[f'{value}'] = 'Empty'
 
-    print("requests_data:", requests_data)
+    #print("requests_data:", requests_data)
     valueHeader = value.capitalize()
     chart_data = [[valueHeader,'Count']]
     for row in requests_data:
@@ -63,6 +74,30 @@ def data():
 
     return jsonify(chart_data)
 
+@app.route("/letters")
+def letters():
+    race = request.args.get('race')
+    print("Race: ",race)
+    conn = dbOps.get_db_connection()
+    cursor = conn.cursor()
+    names = cursor.execute(''f'SELECT name FROM responses join requests on responses.requestID = requests.id where race = "{race}"''').fetchall()
+    conn.close()
+    
+    names_list = [name[0] for name in names]
+    print("Names list: ",names_list)
+    
+    # Convert all names to uppercase and concatenate them into a single string
+    all_names = ''.join(names_list).upper()
+
+    # Count occurrences of each letter
+    letter_counts = Counter(all_names)
+
+    # Prepare data as a list of tuples for Google Charts
+    chart_data = [('Letter', 'Count')]  # Adding headers for Google Charts
+    chart_data.extend([(letter, count) for letter, count in sorted(letter_counts.items(), key=lambda item: item[1], reverse=True) if letter not in [' ', "'", '-']])
+
+    print("Chart data:", chart_data)
+    return jsonify(chart_data)
 
 @app.route("/generate", methods=["POST"])
 def generate():
@@ -105,4 +140,4 @@ def generate():
     return redirect(url_for('names'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=12128)

@@ -11,11 +11,19 @@
     {% block content1 %}
     <div class="mx-4">
         <div class="max-w-lg mx-auto mb-24 h-screen mt-4">
-            <label for="param" id="paramLabel" class="block">Select parameter</label>
-            <div class="bg-gray-700 border border-gray-600 rounded-lg text-lg mx-4 mb-4 sm:mx-1 inline-block relative cursor-pointer w-full"
+            <div class="flex flex-row justify-between mx-2 sm:mx-1">
+                <p class="inline">
+                    Queries sent: {{queries}}
+                </p>
+                <p class="inline">
+                    Names generated: {{names}}
+                </p>
+            </div>
+            <label for="param" id="paramLabel" class="block mx-auto">Select parameter</label>
+            <div class="bg-gray-700 border border-gray-600 rounded-lg text-lg mx-auto mb-4 inline-block relative cursor-pointer w-full"
                 id="{{param}}Div">
                 <select
-                    class="w-full bg-inherit pr-8 p-1 bg-gray-700 cursor-pointer rounded-lg hover:bg-gray-500 transition duration-300 focus:outline-none focus:ring focus:ring-indigo-300 z-0"
+                    class="w-full bg-inherit pr-8 p-1 bg-gray-700 cursor-pointer rounded-lg hover:bg-gray-500 transition duration-300 focus:outline-none focus:ring focus:ring-indigo-300"
                     id="paramSelect" name="paramSelect">
                     {% for param in paramsNames %}
                     {%if param !='Optional'%}
@@ -32,7 +40,8 @@
                                                 	s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z" />
                 </svg>
             </div>
-            <div id="pie_chart" class="w-full"></div>
+            <div id="pie_chart" class="w-full min-h-80"></div>
+            <div id="pie_chart2" class="w-full min-h-80"></div>
         </div>
     </div>
 
@@ -57,7 +66,7 @@
 
         function drawChart() {
             let value = paramSelect.value
-            fetch(`/data?param=${value}`)
+            fetch(`/params?param=${value}`)
                 .then(response => response.json())
                 .then(chartData => {
                     const data = google.visualization.arrayToDataTable(chartData)
@@ -67,8 +76,6 @@
                         backgroundColor: '#312E81',
                         legend: { position: 'bottom', textStyle: { color: 'white' } },
                         titleTextStyle: { color: 'white' },
-                        width: 600,
-                        height: 400
                     };
 
                     const chart = new google.visualization.PieChart(document.getElementById('pie_chart'))
@@ -77,9 +84,35 @@
                 })
                 .catch(error => console.error('Error fetching data:', error))
         }
+
+        function drawChart2() {
+            fetch(`/letters?race=Dwarf`)
+                .then(response => response.json())
+                .then(chartData => {
+                    const data = google.visualization.arrayToDataTable(chartData)
+
+                    const options = {
+                        title: `Letters for Dwarf`,
+                        backgroundColor: '#312E81',
+                        legend: { position: 'bottom', textStyle: { color: 'white' } },
+                        titleTextStyle: { color: 'white' },
+                        sliceVisibilityThreshold: 0.045
+                    };
+
+                    const chart = new google.visualization.PieChart(document.getElementById('pie_chart2'))
+
+                    chart.draw(data, options)
+                })
+                .catch(error => console.error('Error fetching data:', error))
+        }
         window.onload = function () {
             drawChart()
+            drawChart2()
         };
+        window.onresize = function () {
+            drawChart()
+            drawChart2()
+        }
     </script>
     {% endblock %}
 </body>
