@@ -1,5 +1,5 @@
 params = {
-    'race': ['Human','Dwarf','Elf','Orc','Halfling','Gnome','Dragonborn','Lizardfolk','Vampire'],
+    'race': ['Human','Dwarf','Elf','Goblin','Orc','Halfling','Gnome','Dragonborn','Lizardfolk','Vampire'],
     'gender': ['Male','Female'],
     'alignment':['Good','Evil'],
     'profession': ['Blacksmith', 'Charlatan','Cook', 'Cleric', 'Entertainer', 'Hermit', 'Hunter','Inventor', 'Noble','Peasant', 'Sailor', 'Warrior'],

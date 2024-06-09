@@ -6,7 +6,7 @@
 {% extends "layout.html" %}
 
 
-{% block title %}Names{% endblock %}
+{% block title %}NameGen | Names{% endblock %}
 {% block head %}
 {{ super() }}
 {% endblock %}
@@ -94,8 +94,9 @@
             {% endfor %}
 
         </div>
-        <p class="w-56 mx-auto font-semibold mt-2">Click a name to copy it!</p>
+        <p class="w-fit mx-auto font-semibold mt-2">Click a name to copy it!</p>
         {%endif%}
+
     </div>
 
     {%if list|length > 0 %}

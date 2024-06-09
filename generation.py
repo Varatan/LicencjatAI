@@ -38,7 +38,7 @@ class Generator():
                response_format={"type": "json_object"},
                temperature=1.2, #Changed from 1.5, gave weird results sometimes
                messages=[
-                  {"role": "system", "content": 'You are a creative and groundbreaking fantasy writer. Your task is to come up with new names. Don\'t use names from existing fantasy fiction. You must output only a single JSON object with a table called "names" in this format: {"names":["name1","name2","nameX"]}. Each name must be a single string in this array. You will be penalized for using existing names. I will tip you 200$ if the format is correct.'},
+                  {"role": "system", "content": 'You are a creative and groundbreaking fantasy writer. Your task is to come up with new names. Remember to generate only new names. You must output only a single JSON object with a table called "names" in this format: {"names":["name1","name2","nameX"]}. Each name must be a single string in this array. You will be penalized for using names from existing fantasy fiction. I will tip you 200$ if the format is correct.'},
                   {"role": "user", "content": endMessage}
                ]
             )

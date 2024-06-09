@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}Stats{% endblock %}
+{% block title %}NameGen | Stats{% endblock %}
 {% block head %}
 {{ super() }}
 {% endblock %}
@@ -10,7 +10,7 @@
     {% endblock %}
     {% block content1 %}
     <div class="mx-4">
-        <div class="max-w-lg mx-auto mb-24 h-screen mt-4">
+        <div class="max-w-lg mx-auto mb-36 h-screen mt-4">
             <div class="flex flex-row justify-between mx-2 sm:mx-1">
                 <p class="inline">
                     Queries sent: {{queries}}
@@ -20,8 +20,8 @@
                 </p>
             </div>
             <label for="param" id="paramLabel" class="block mx-auto">Select parameter</label>
-            <div class="bg-gray-700 border border-gray-600 rounded-lg text-lg mx-auto mb-4 inline-block relative cursor-pointer w-full"
-                id="{{param}}Div">
+            <div class="bg-gray-700 border border-gray-600 rounded-lg text-lg mx-auto mb-1 inline-block relative cursor-pointer w-full"
+                id="paramDiv">
                 <select
                     class="w-full bg-inherit pr-8 p-1 bg-gray-700 cursor-pointer rounded-lg hover:bg-gray-500 transition duration-300 focus:outline-none focus:ring focus:ring-indigo-300"
                     id="paramSelect" name="paramSelect">
@@ -40,8 +40,46 @@
                                                 	s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z" />
                 </svg>
             </div>
-            <div id="pie_chart" class="w-full min-h-80"></div>
-            <div id="pie_chart2" class="w-full min-h-80"></div>
+            <div id="pie_chart" class="w-full min-h-96"></div>
+            <label for="raceSelect" id="raceLabel" class="block mx-auto">Select race</label>
+            <div class="bg-gray-700 border border-gray-600 rounded-lg text-lg mx-auto mb-1 inline-block relative cursor-pointer w-full"
+                id="raceDiv">
+                <select
+                    class="w-full bg-inherit pr-8 p-1 bg-gray-700 cursor-pointer rounded-lg hover:bg-gray-500 transition duration-300 focus:outline-none focus:ring focus:ring-indigo-300"
+                    id="raceSelect" name="raceSelect">
+                    {% for race in races %}
+                    <option value="{{ race }}">{{ race }}</option>
+                    {% endfor %}
+                </select>
+                <svg class="inline w-5 h-5 fill-white absolute right-3 top-2" style="pointer-events:none"
+                    id="selectArrow" viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve">
+                    <path id="XMLID_225_"
+                        d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393
+                                                                        	c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393
+                                                                        	s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z" />
+                </svg>
+            </div>
+            <label for="nameSelect" id="nameLabel" class="block mx-auto">Use only first name in statistics</label>
+            <div class="bg-gray-700 border border-gray-600 rounded-lg text-lg mx-auto mb-1 inline-block relative cursor-pointer w-full"
+                id="nameDiv">
+                <select
+                    class="w-full bg-inherit pr-8 p-1 bg-gray-700 cursor-pointer rounded-lg hover:bg-gray-500 transition duration-300 focus:outline-none focus:ring focus:ring-indigo-300"
+                    id="nameSelect" name="nameSelect">
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                </select>
+                <svg class="inline w-5 h-5 fill-white absolute right-3 top-2" style="pointer-events:none"
+                    id="selectArrow" viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve">
+                    <path id="XMLID_225_"
+                        d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393
+                                                                                                	c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393
+                                                                                                	s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z" />
+                </svg>
+            </div>
+            <div id="pie_chart2" class="w-full min-h-96">
+            </div>
         </div>
     </div>
 
@@ -65,16 +103,16 @@
         paramSelect.addEventListener("change", drawChart)
 
         function drawChart() {
-            let value = paramSelect.value
-            fetch(`/params?param=${value}`)
+            let paramValue = paramSelect.value
+            fetch(`/params?param=${paramValue}`)
                 .then(response => response.json())
                 .then(chartData => {
                     const data = google.visualization.arrayToDataTable(chartData)
 
                     const options = {
-                        title: `${value} selection`,
+                        title: `${paramValue} selection`,
                         backgroundColor: '#312E81',
-                        legend: { position: 'bottom', textStyle: { color: 'white' } },
+                        legend: { position: 'right', textStyle: { color: 'white' } },
                         titleTextStyle: { color: 'white' },
                     };
 
@@ -85,16 +123,23 @@
                 .catch(error => console.error('Error fetching data:', error))
         }
 
+        let raceSelect = document.getElementById('raceSelect')
+        raceSelect.addEventListener("change", drawChart2)
+
+        let nameSelect = document.getElementById('nameSelect')
+        nameSelect.addEventListener("change", drawChart2)
+
         function drawChart2() {
-            fetch(`/letters?race=Dwarf`)
+            let raceValue = raceSelect.value
+            let nameValue = nameSelect.value
+            fetch(`/letters?race=${raceValue}&name=${nameValue}`)
                 .then(response => response.json())
                 .then(chartData => {
                     const data = google.visualization.arrayToDataTable(chartData)
-
                     const options = {
-                        title: `Letters for Dwarf`,
+                        title: `Most common letters for ${raceValue}`,
                         backgroundColor: '#312E81',
-                        legend: { position: 'bottom', textStyle: { color: 'white' } },
+                        legend: { position: 'right', textStyle: { color: 'white' } },
                         titleTextStyle: { color: 'white' },
                         sliceVisibilityThreshold: 0.045
                     };

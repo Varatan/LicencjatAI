@@ -24,11 +24,11 @@ def redirect_to_names():
 @app.route("/names")
 def names():
     paramsNames = list(params.keys())
-    names_list = session.pop('names_list', []) 
+    namesList = session.pop('namesList', []) 
     current = session.pop('current', [])
     loading = False
     currentSite = "Names"
-    return render_template("names.html", list=names_list, loading=loading, params=params, paramsNames=paramsNames, current = current, sites=sites, currentSite = currentSite, currentYear=currentYear)
+    return render_template("names.html", list=namesList, loading=loading, params=params, paramsNames=paramsNames, current = current, sites=sites, currentSite = currentSite, currentYear=currentYear)
 
 @app.route("/info")
 def info():
@@ -38,6 +38,8 @@ def info():
 @app.route("/stats")
 def stats():
     currentSite="Stats"
+    races = params['race']
+    #print("races:", races)
     for i in range(len(paramsNames)):
         paramsNames[i] = paramsNames[i].capitalize()
 
@@ -50,7 +52,7 @@ def stats():
     names = names[0]
 
     #print("Names: ", names," Queries: ", queries)
-    return render_template("stats.html",sites=sites, currentSite = currentSite, currentYear=currentYear, paramsNames=paramsNames, names=names, queries=queries)
+    return render_template("stats.html",sites=sites, currentSite = currentSite, currentYear=currentYear, paramsNames=paramsNames, names=names, queries=queries, races=races)
 
 @app.route('/params')
 def parameters():
@@ -60,44 +62,48 @@ def parameters():
     cursor = conn.cursor()
     requests = cursor.execute(''f'SELECT {value}, count({value}) as count FROM requests group by {value}''').fetchall()
     conn.close()
-    requests_data = [dict(row) for row in requests]
+    requestsData = [dict(row) for row in requests]
 
-    for item in requests_data:
+    for item in requestsData:
         if item[f'{value}'] == '':
             item[f'{value}'] = 'Empty'
 
-    #print("requests_data:", requests_data)
-    valueHeader = value.capitalize()
-    chart_data = [[valueHeader,'Count']]
-    for row in requests_data:
-        chart_data.append([row[f'{value}'], row['count']])
+    requestsData = sorted(requestsData, key=lambda x: x['count'], reverse=True)
 
-    return jsonify(chart_data)
+    #print("requestsData:", requestsData)
+    valueHeader = value.capitalize()
+    chartData = [[valueHeader,'Count']]
+    for row in requestsData:
+        chartData.append([row[f'{value}'], row['count']])
+
+    return jsonify(chartData)
 
 @app.route("/letters")
 def letters():
     race = request.args.get('race')
-    print("Race: ",race)
+    name = request.args.get('name')
     conn = dbOps.get_db_connection()
     cursor = conn.cursor()
     names = cursor.execute(''f'SELECT name FROM responses join requests on responses.requestID = requests.id where race = "{race}"''').fetchall()
     conn.close()
     
-    names_list = [name[0] for name in names]
-    print("Names list: ",names_list)
+    namesList = [name[0] for name in names]
+    if name == 'Yes':
+        namesList = [name.split()[0] for name in namesList]
+    print("Names list: ",namesList)
     
     # Convert all names to uppercase and concatenate them into a single string
-    all_names = ''.join(names_list).upper()
+    allNames = ''.join(namesList).upper()
 
     # Count occurrences of each letter
-    letter_counts = Counter(all_names)
+    letterCounts = Counter(allNames)
 
     # Prepare data as a list of tuples for Google Charts
-    chart_data = [('Letter', 'Count')]  # Adding headers for Google Charts
-    chart_data.extend([(letter, count) for letter, count in sorted(letter_counts.items(), key=lambda item: item[1], reverse=True) if letter not in [' ', "'", '-']])
+    chartData = [('Letter', 'Count')]  # Adding headers for Google Charts
+    chartData.extend([(letter, count) for letter, count in sorted(letterCounts.items(), key=lambda item: item[1], reverse=True) if letter not in [' ', "'", '-']])
 
-    print("Chart data:", chart_data)
-    return jsonify(chart_data)
+    #print("Chart data:", chartData)
+    return jsonify(chartData)
 
 @app.route("/generate", methods=["POST"])
 def generate():
@@ -131,8 +137,8 @@ def generate():
     conn.close()
 
     names = generator.GenerateNames(race, gender, alignment, profession, tone, culture, lastName, nickName,lastId)
-    names_list = names['names']
-    session['names_list'] = names_list  # Store names_list in session
+    namesList = names['names']
+    session['namesList'] = namesList  # Store namesList in session
     session['current'] = current
 
 
