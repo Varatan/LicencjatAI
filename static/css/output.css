@@ -627,6 +627,10 @@ label {
   margin-bottom: 1.25rem;
 }
 
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -635,8 +639,8 @@ label {
   margin-bottom: 6rem;
 }
 
-.mb-4 {
-  margin-bottom: 1rem;
+.mb-36 {
+  margin-bottom: 9rem;
 }
 
 .mb-80 {
@@ -659,16 +663,8 @@ label {
   margin-top: 1.25rem;
 }
 
-.mb-10 {
-  margin-bottom: 2.5rem;
-}
-
-.mb-1 {
-  margin-bottom: 0.25rem;
-}
-
-.mb-36 {
-  margin-bottom: 9rem;
+.mb-56 {
+  margin-bottom: 14rem;
 }
 
 .block {
@@ -728,10 +724,6 @@ label {
   height: 100vh;
 }
 
-.min-h-80 {
-  min-height: 20rem;
-}
-
 .min-h-96 {
   min-height: 24rem;
 }
@@ -744,21 +736,17 @@ label {
   width: 1.25rem;
 }
 
-.w-56 {
-  width: 14rem;
-}
-
 .w-auto {
   width: auto;
-}
-
-.w-full {
-  width: 100%;
 }
 
 .w-fit {
   width: -moz-fit-content;
   width: fit-content;
+}
+
+.w-full {
+  width: 100%;
 }
 
 .max-w-0 {

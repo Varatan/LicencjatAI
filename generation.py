@@ -36,9 +36,9 @@ class Generator():
             response = self.__client.chat.completions.create(
                model="gpt-3.5-turbo-0125",
                response_format={"type": "json_object"},
-               temperature=1.2, #Changed from 1.5, gave weird results sometimes
+               temperature=1.3, #Changed from 1.5, gave weird results sometimes
                messages=[
-                  {"role": "system", "content": 'You are a creative and groundbreaking fantasy writer. Your task is to come up with new names. Remember to generate only new names. You must output only a single JSON object with a table called "names" in this format: {"names":["name1","name2","nameX"]}. Each name must be a single string in this array. You will be penalized for using names from existing fantasy fiction. I will tip you 200$ if the format is correct.'},
+                  {"role": "system", "content": 'You are a creative and groundbreaking fantasy writer. Your task is to come up with new names. Remember to generate only new names. You must output only a single JSON object with a table called "names" in this format: {"names":["name1","name2","nameX"]}. Each name must be a single string in this array. You will be penalized for using names from existing fantasy fiction. I will tip you 200$ if the format is correct and you create only new names.'},
                   {"role": "user", "content": endMessage}
                ]
             )
